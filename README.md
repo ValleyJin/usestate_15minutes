@@ -237,12 +237,9 @@ Tailwind CSS는 JSX 코드에서 일반 CSS 클래스처럼 보이는 `className
 
 ---
 
-## Tailwind CSS 설치 가이드
+### Tailwind CSS 설치 및 설정 (Tailwind CSS v4.x 기준)
 
-### 1. 필수 패키지 설치
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+Tailwind CSS 4.x 이상에서는 PostCSS 플러그인 방식이 변경되었습니다. 아래 내용을 반드시 따라야 오류 없이 동작합니다.
 ```
 
 ### 2. package.json 의존성 확인

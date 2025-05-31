@@ -3,6 +3,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import TimeDisplay from '@/components/features/TimeDisplay'
+import SampleBox from '@/components/ui/SampleBox'
+import MenuMessageContainer from '@/components/container/MenuMessageContainer'
 
 function App() {
   // 1로 초기화 하여 state변수 time 선언, 업데이트 값을 받는 함수 setTime 선트  
@@ -26,11 +28,16 @@ function App() {
         </a>
       </div>
 
-      {/* 시계 컴포넌트 가져오기 */}
+      {/* 기능 컴포넌트: 시계 컴포넌트 가져오기 */}
       <TimeDisplay time={time} onUpdate={handleClick} />
+      <br />
 
-      {/* 다른 컴포넌트 추가 */}
+      {/* 컨테이너 컴포넌트: 식당 비즈니스 매뉴 컴포넌트 추가 */}
+      <MenuMessageContainer time={time} />
+      <br />
       
+      {/* UI 컴포넌트: 디자인 컴포넌트 추가 */}
+      <SampleBox />
     </>
   )
 }
