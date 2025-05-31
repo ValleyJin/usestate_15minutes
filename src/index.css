@@ -13,6 +13,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@tailwind components;
+@tailwind utilities;
+@tailwind base;
+
 a {
   font-weight: 500;
   color: #646cff;

@@ -10,6 +10,7 @@ Vite + React + TypeScript로 구현된 시간 업데이트 애플리케이션
 ## 이벤트 핸들링 비교
 
 ### 1. React(JSX) 방식
+<!-- onClick은 react의 이벤트 핸들러 속성.  -->
 ```tsx
 <button onClick={() => setTime(time + 1)}>
   update
@@ -34,6 +35,11 @@ Vite + React + TypeScript로 구현된 시간 업데이트 애플리케이션
 ## 이벤트 핸들러 전달 방식
 
 ### 1. 함수 참조 직접 전달 (권장)
+<!-- 
+onClick의 본질 : props 속성으로, 컴포넌트에 전달되는 이벤트 등록용 프로퍼티
+- 등록: handleClick 함수 참조가 onClick prop으로 전달
+실행: 실제 클릭 이벤트 발생 → React가 등록된 handleClick 호출 
+-->
 ```tsx
 <button onClick={handleClick}>
 ```
@@ -55,6 +61,50 @@ Vite + React + TypeScript로 구현된 시간 업데이트 애플리케이션
 - JSX에서 `{}`는 모든 JavaScript 표현식(expression)을 허용
 - 함수는 JavaScript에서 1급 객체이므로 값으로 전달 가능
 - 함수 호출(`handleClick()`)이 아닌 참조(`handleClick`) 전달 필요
+
+## React Props 기본 개념
+
+### 1. props의 정의
+- **props**(properties): 부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 메커니즘
+- 읽기 전용(read-only)이며 자식 컴포넌트에서 수정 불가
+
+### 2. 주요 특징
+| 특징 | 설명 |
+|------|------|
+| **단방향 데이터 흐름** | 부모 → 자식 방향으로만 전달 |
+| **다양한 타입 지원** | 문자열, 숫자, 함수, JSX 등 모두 전달 가능 |
+| **TypeScript 지원** | 인터페이스로 타입 안정성 보장 |
+
+### 3. 사용 예시
+```tsx
+// 부모 컴포넌트
+function Parent() {
+  return <Child message="안녕하세요" count={10} />;
+}
+
+// 자식 컴포넌트
+interface ChildProps {
+  message: string;
+  count: number;
+}
+
+function Child({ message, count }: ChildProps) {
+  return <div>{message} {count}번</div>;
+}
+```
+
+### 4. props vs state
+|  | props | state |
+|--|-------|-------|
+| **변경 가능성** | ❌ (읽기 전용) | ⭕ (setState로 변경) |
+| **사용 목적** | 컴포넌트 간 통신 | 컴포넌트 내부 상태 관리 |
+
+### 5. 이벤트 핸들러 전달
+```tsx
+<Button onClick={handleClick} />
+```
+- 함수도 props로 전달 가능
+- `onClick`은 prop 이름, `handleClick`은 이벤트 핸들러 함수
 
 ## 경로 별칭(Path Alias) 설정
 
@@ -150,6 +200,42 @@ import { Button } from "@/components/ui/button";
 - **shadcn 선택 시**:
   - 빠른 프로토타이핑 필요할 때
   - 접근성/반응형이 내장된 컴포넌트 필요 시
+
+## Tailwind CSS 적용 원리와 실제 동작
+
+### 1. JSX 코드와 Tailwind의 관계
+Tailwind CSS는 JSX 코드에서 일반 CSS 클래스처럼 보이는 `className` 속성에 유틸리티 클래스를 입력하면, 빌드 시 해당 클래스에 맞는 스타일을 자동으로 생성해 적용합니다.
+
+**예시:**
+```tsx
+<button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 ...">update</button>
+```
+- 위 코드의 `className` 값들은 Tailwind CSS의 유틸리티 클래스입니다.
+
+### 2. Tailwind가 실제로 적용되는 과정
+1. `tailwind.config.js`의 `content` 배열에 `./src/**/*.{js,ts,jsx,tsx}` 등 프로젝트 내 파일 경로가 포함되어야 함
+2. Vite(또는 빌드 도구)가 빌드할 때 Tailwind가 모든 파일의 `className` 속성을 스캔하여 실제로 사용된 클래스만 CSS로 변환
+3. `src/index.css`에 반드시 아래 3줄이 포함되어야 함:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+4. 빌드 후 브라우저에 로드된 CSS가 실제로 해당 클래스에 맞는 스타일을 적용
+
+### 3. 코드만 보면 구분이 어려운 이유
+- JSX 코드에서 `className`은 일반 CSS 클래스와 동일하게 보임
+- Tailwind는 빌드 시스템과 연동되어 동적으로 CSS를 생성하기 때문에, 별도의 Tailwind 전용 문법 없이도 동작
+
+### 4. Tailwind 적용 여부 확인 방법
+- `className`에 Tailwind 유틸리티 클래스(`bg-blue-600`, `rounded`, `hover:bg-blue-700` 등)가 있는지 확인
+- `tailwind.config.js`, `postcss.config.js`, `src/index.css`에 Tailwind 설정이 있는지 확인
+- 브라우저 개발자도구에서 버튼 요소를 검사하면 Tailwind에서 생성된 스타일이 실제로 적용된 것을 볼 수 있음
+
+### 💡 결론
+- 코드만 보면 일반 CSS 클래스와 구분이 어렵지만, Tailwind의 빌드 시스템이 자동으로 스타일을 생성·적용하기 때문에 특별한 Tailwind 전용 문법 없이도 동작함
+
+---
 
 ## Tailwind CSS 설치 가이드
 
@@ -441,3 +527,31 @@ npm run build
 | **코드 크기**      | 최적화 없음             | 압축 및 최소화          |
 | **디버깅**         | 소스맵 지원             | 난독화 적용             |
 | **사용 목적**      | 개발 중 실시간 피드백   | 실제 서버 배포용         |
+
+## TypeScript 인터페이스 vs 클래스
+|  | 인터페이스 | 클래스 |
+|--|------------|--------|
+| **용도** | 타입 검사용 | 객체 생성 + 로직 구현 |
+| **JavaScript 변환** | ❌ (컴파일 시 제거) | ⭕ (실제 코드로 유지) |
+| **인스턴스화** | 불가능 | `new` 키워드로 생성 가능 |
+| **React에서의 사용** | Props 타입 정의 | 컴포넌트 구현(클래스 컴포넌트) |
+
+#### 💡 중요 사실
+- JavaScript에는 인터페이스 개념이 없음 (TypeScript 전용 기능)
+- 인터페이스는 런타임에 완전히 사라지는 순수 타입 정의
+- 클래스는 타입으로도 사용 가능하지만, props 정의에는 인터페이스 권장
+
+```typescript
+// 올바른 예: 인터페이스로 props 타입 정의
+interface Props {
+  time: number;
+  onUpdate: () => void;
+}
+
+// 잘못된 예: 클래스로 props 타입 정의 (과도한 설계)
+class Props { // ❌ React에서는 이렇게 사용X
+  constructor(
+    public time: number,
+    public onUpdate: () => void
+  ) {}
+}
