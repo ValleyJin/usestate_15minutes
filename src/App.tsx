@@ -2,12 +2,21 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import TimeDisplay from '@/components/features/TimeDisplay'
 
 function App() {
-  const [count, setCount] = useState(0)
+  // 1로 초기화 하여 state변수 time 선언, 업데이트 함수 setTime 선트  
+  const [time, setTime] = useState(1)
+
+  const handleClick = () => {
+    setTime(time + 1)
+  }
+
+  console.log('App 컴포넌트가 다시 렌더링되었습니다.')
 
   return (
     <>
+      {/* 상단 로고 */}
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -16,18 +25,9 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      {/* 시계 */}
+      <TimeDisplay time={time} onUpdate={handleClick} />
     </>
   )
 }
