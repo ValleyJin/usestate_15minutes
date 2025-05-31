@@ -513,13 +513,14 @@ interface Props {
 }
 
 // 잘못된 예: 클래스로 props 타입 정의 (과도한 설계)
+```typescript
 class Props { // ❌ React에서는 이렇게 사용X
   constructor(
     public time: number,
     public onUpdate: () => void
   ) {}
 }
-
+```
 ---
 
 ## React 빌드/동적 렌더링 원리
