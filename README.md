@@ -358,8 +358,9 @@ export default App
 ```
 src/
 ├─ components/
-│  ├─ ui/       # Button, Input 등
-│  └─ features/ # Timer, Counter 등
+│  ├─ container/ # 컨테이너 컴포넌트
+│  ├─ features/ # 기능 컴포넌트
+│  ├─ ui/       # UI 컴포넌트
 ├─ hooks/       # useTimer 등
 └─ utils/       # 공용 함수
 ```
