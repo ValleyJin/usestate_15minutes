@@ -201,45 +201,12 @@ import { Button } from "@/components/ui/button";
   - 빠른 프로토타이핑 필요할 때
   - 접근성/반응형이 내장된 컴포넌트 필요 시
 
-## Tailwind CSS 적용 원리와 실제 동작
+## Tailwind CSS 설치 가이드
 
-### 1. JSX 코드와 Tailwind의 관계
-Tailwind CSS는 JSX 코드에서 일반 CSS 클래스처럼 보이는 `className` 속성에 유틸리티 클래스를 입력하면, 빌드 시 해당 클래스에 맞는 스타일을 자동으로 생성해 적용합니다.
-
-**예시:**
-```tsx
-<button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 ...">update</button>
-```
-- 위 코드의 `className` 값들은 Tailwind CSS의 유틸리티 클래스입니다.
-
-### 2. Tailwind가 실제로 적용되는 과정
-1. `tailwind.config.js`의 `content` 배열에 `./src/**/*.{js,ts,jsx,tsx}` 등 프로젝트 내 파일 경로가 포함되어야 함
-2. Vite(또는 빌드 도구)가 빌드할 때 Tailwind가 모든 파일의 `className` 속성을 스캔하여 실제로 사용된 클래스만 CSS로 변환
-3. `src/index.css`에 반드시 아래 3줄이 포함되어야 함:
-   ```css
-   @tailwind base;
-   @tailwind components;
-   @tailwind utilities;
-   ```
-4. 빌드 후 브라우저에 로드된 CSS가 실제로 해당 클래스에 맞는 스타일을 적용
-
-### 3. 코드만 보면 구분이 어려운 이유
-- JSX 코드에서 `className`은 일반 CSS 클래스와 동일하게 보임
-- Tailwind는 빌드 시스템과 연동되어 동적으로 CSS를 생성하기 때문에, 별도의 Tailwind 전용 문법 없이도 동작
-
-### 4. Tailwind 적용 여부 확인 방법
-- `className`에 Tailwind 유틸리티 클래스(`bg-blue-600`, `rounded`, `hover:bg-blue-700` 등)가 있는지 확인
-- `tailwind.config.js`, `postcss.config.js`, `src/index.css`에 Tailwind 설정이 있는지 확인
-- 브라우저 개발자도구에서 버튼 요소를 검사하면 Tailwind에서 생성된 스타일이 실제로 적용된 것을 볼 수 있음
-
-### 💡 결론
-- 코드만 보면 일반 CSS 클래스와 구분이 어렵지만, Tailwind의 빌드 시스템이 자동으로 스타일을 생성·적용하기 때문에 특별한 Tailwind 전용 문법 없이도 동작함
-
----
-
-### Tailwind CSS 설치 및 설정 (Tailwind CSS v4.x 기준)
-
-Tailwind CSS 4.x 이상에서는 PostCSS 플러그인 방식이 변경되었습니다. 아래 내용을 반드시 따라야 오류 없이 동작합니다.
+### 1. 필수 패키지 설치
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
 ```
 
 ### 2. package.json 의존성 확인
@@ -358,9 +325,8 @@ export default App
 ```
 src/
 ├─ components/
-│  ├─ container/ # 컨테이너 컴포넌트
-│  ├─ features/ # 기능 컴포넌트
-│  ├─ ui/       # UI 컴포넌트
+│  ├─ ui/       # Button, Input 등
+│  └─ features/ # Timer, Counter 등
 ├─ hooks/       # useTimer 등
 └─ utils/       # 공용 함수
 ```
@@ -553,3 +519,35 @@ class Props { // ❌ React에서는 이렇게 사용X
     public onUpdate: () => void
   ) {}
 }
+
+---
+
+## React 빌드/동적 렌더링 원리
+
+### 1. main.tsx와 App.tsx의 구조
+- `main.tsx`는 React 앱의 진입점(entry point)입니다.
+- `createRoot(document.getElementById('root')).render(<App />)` 형태로, 오직 **App 컴포넌트 하나만** root DOM에 렌더링합니다.
+- 여러 개의 tsx 파일(컴포넌트)을 App 내부에서 자유롭게 조합해 사용할 수 있습니다.
+- root에서 여러 컴포넌트를 직접 렌더링하기보다는 App 하나만 렌더링하고, 그 내부에서 필요한 컴포넌트들을 import해 조합하는 것이 표준적입니다.
+
+### 2. 빌드 단계에서 생성되는 것
+- 빌드 시점(`npm run build`)에는 오직 **정적 파일**(index.html, 번들된 js, css 등)만 생성됩니다.
+- 이때는 사용자별 데이터/상태/조건에 따라 달라지는 실제 화면(HTML)은 미리 만들어지지 않습니다.
+- 즉, build 결과물은 모든 사용자에게 동일한 파일입니다.
+
+### 3. 서비스(런타임) 단계에서의 동적 렌더링
+- 사용자가 브라우저에서 사이트에 접속하면, 브라우저가 정적 파일을 받아와서 JS를 실행하고 React 앱이 동작을 시작합니다.
+- 이때부터 React가 사용자의 상태/입력/데이터에 따라 **동적으로 컴포넌트 트리를 렌더링**합니다.
+- 즉, 실제로 사용자마다 보게 되는 HTML은 브라우저에서 JS가 실행된 결과입니다.
+- 상태(state), props, 사용자 입력, 서버 데이터 등에 따라 각 사용자별로 동적으로 화면이 바뀝니다.
+
+### 4. SPA와 SSR/SSG의 차이
+- Vite/CRA 등 SPA(싱글 페이지 앱)는 브라우저에서만 동적으로 화면을 만듭니다.
+- Next.js 같은 프레임워크의 SSR(서버 사이드 렌더링)이나 SSG(정적 사이트 생성)는 서버에서 사용자별 HTML을 미리 만들어 보내기도 합니다.
+- 본 프로젝트는 SPA 구조이므로, 빌드 시점에는 정적 파일만 생성되고, 동적 화면은 모두 브라우저에서 JS가 실행되며 만들어집니다.
+
+### 5. 요약
+- 빌드 단계: 사용자 상태와 무관하게 "정적 파일"만 생성
+- 서비스(실행) 단계: 각 사용자 환경/상태/데이터에 따라 JS가 브라우저에서 동적으로 HTML, CSS를 만들어서 보여줌
+
+---
