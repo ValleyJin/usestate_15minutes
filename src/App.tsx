@@ -5,7 +5,7 @@ import './App.css'
 import TimeDisplay from '@/components/features/TimeDisplay'
 
 function App() {
-  // 1로 초기화 하여 state변수 time 선언, 업데이트 함수 setTime 선트  
+  // 1로 초기화 하여 state변수 time 선언, 업데이트 값을 받는 함수 setTime 선트  
   const [time, setTime] = useState(1)
 
   const handleClick = () => {
@@ -26,8 +26,11 @@ function App() {
         </a>
       </div>
 
-      {/* 시계 */}
+      {/* 시계 컴포넌트 가져오기 */}
       <TimeDisplay time={time} onUpdate={handleClick} />
+
+      {/* 다른 컴포넌트 추가 */}
+      
     </>
   )
 }

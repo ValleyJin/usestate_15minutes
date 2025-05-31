@@ -1,3 +1,4 @@
+// TimeDisplay 컴포넌트에서 인자로 사용할 props 타입을 interface 클래스형태로 선언
 interface TimeDisplayProps {
   time: number;
   onUpdate: () => void;
