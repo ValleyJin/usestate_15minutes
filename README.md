@@ -346,16 +346,29 @@ interface TimeDisplayProps {
 ```
 - **What(무엇)**: TimeDisplay는 "시간 업데이트 요청"만 담당
 - **How(어떻게)**: 실제 구현은 부모 컴포넌트(App)가 결정
+- React의 핵심 철학 중 하나는:
+```
+"상태는 필요한 곳에서 한 번만 관리하고, 필요한 자식에게 내려보내라."
+
+자식 컴포넌트는 UI를 보여주는 역할만 하게 하고,
+상태 변경이나 처리 로직은 상위에서 한 곳에서 집중적으로 관리하는 것이 좋습니다.
+```
 
 #### 사용 예시
 ```tsx
-// 부모 컴포넌트
-<TimeDisplay 
-  onUpdate={() => setTime(time + 1)} // 함수 전달
-/>
+// 1. 타입 정의
+interface TimeDisplayProps {
+  onUpdate: () => void;
+}
 
-// 자식 컴포넌트
-<button onClick={onUpdate}>update</button> // 함수 실행
+// 2. 컴포넌트 정의 - 이곳에서 타입을 사용
+const TimeDisplay = ({ onUpdate }: TimeDisplayProps) => (
+  <button onClick={onUpdate}>update</button>
+);
+
+// 3. 부모 컴포넌트에서 props 전달
+<TimeDisplay onUpdate={() => setTime(time + 1)} />
+
 ```
 
 #### 장점
